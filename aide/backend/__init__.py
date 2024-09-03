@@ -1,4 +1,4 @@
-from . import backend_anthropic, backend_openai
+from . import backend_anthropic, backend_openai, backend_deepseek
 from .utils import FunctionSpec, OutputType, PromptType, compile_prompt_to_md
 
 
@@ -32,8 +32,12 @@ def query(
         "temperature": temperature,
         "max_tokens": max_tokens,
     }
-
-    query_func = backend_openai.query if "gpt-" in model else backend_anthropic.query
+    if "gpt-" in model:
+        query_func = backend_openai.query
+    elif "claude-" in model:
+        query_func = backend_anthropic.query
+    else:
+        query_func = backend_deepseek.query
     output, req_time, in_tok_count, out_tok_count, info = query_func(
         system_message=compile_prompt_to_md(system_message) if system_message else None,
         user_message=compile_prompt_to_md(user_message) if user_message else None,
