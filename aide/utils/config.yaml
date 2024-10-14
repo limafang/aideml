@@ -44,7 +44,7 @@ agent:
 
   # LLM settings for coding
   code:
-    model: gpt-4-turbo
+    model: o1-preview
     temp: 0.5
 
   # LLM settings for evaluating program output / tracebacks
