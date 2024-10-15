@@ -40,7 +40,7 @@ def query(
             base_url="https://api.openai-forward.com/v1", api_key=api_key, max_retries=0
         )
     else:
-        api_key = os.environ.get("4O_KEY")
+        api_key = os.environ.get("OPENAI_API_KEY")
         _client = openai.OpenAI(
             base_url="https://oneapi.deepwisdom.ai/v1", api_key=api_key, max_retries=0
         )
