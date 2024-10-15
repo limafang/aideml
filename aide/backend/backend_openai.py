@@ -12,6 +12,7 @@ from aide.backend.utils import (
 )
 from funcy import notnone, once, select_values
 import openai
+import os
 
 logger = logging.getLogger("aide")
 
@@ -26,12 +27,6 @@ OPENAI_TIMEOUT_EXCEPTIONS = (
 )
 
 
-@once
-def _setup_openai_client():
-    global _client
-    _client = openai.OpenAI(base_url="https://api.openai-forward.com/v1",max_retries=0)
-
-
 def query(
     system_message: str | None,
     user_message: str | None,
@@ -39,10 +34,21 @@ def query(
     convert_system_to_user: bool = False,
     **model_kwargs,
 ) -> tuple[OutputType, float, int, int, dict]:
-    _setup_openai_client()
+    if model_kwargs["model"] == "o1-preview":
+        api_key = os.environ.get("O1_KEY")
+        _client = openai.OpenAI(
+            base_url="https://api.openai-forward.com/v1", api_key=api_key, max_retries=0
+        )
+    else:
+        api_key = os.environ.get("4O_KEY")
+        _client = openai.OpenAI(
+            base_url="https://oneapi.deepwisdom.ai/v1", api_key=api_key, max_retries=0
+        )
     filtered_kwargs: dict = select_values(notnone, model_kwargs)  # type: ignore
 
-    messages = opt_messages_to_list(system_message, user_message, convert_system_to_user=convert_system_to_user)
+    messages = opt_messages_to_list(
+        system_message, user_message, convert_system_to_user=convert_system_to_user
+    )
 
     if func_spec is not None:
         filtered_kwargs["tools"] = [func_spec.as_openai_tool_dict]
