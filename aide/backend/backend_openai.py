@@ -40,16 +40,18 @@ def query(
         _client = openai.OpenAI(
             base_url="https://api.openai-forward.com/v1", api_key=api_key, max_retries=0
         )
+        messages = opt_messages_to_list(
+            system_message, user_message, convert_system_to_user=True
+        )
     else:
         api_key = os.environ.get("OPENAI_API_KEY")
         _client = openai.OpenAI(
             base_url="https://oneapi.deepwisdom.ai/v1", api_key=api_key, max_retries=0
         )
+        messages = opt_messages_to_list(
+            system_message, user_message, convert_system_to_user=convert_system_to_user
+        )
     filtered_kwargs: dict = select_values(notnone, model_kwargs)  # type: ignore
-
-    messages = opt_messages_to_list(
-        system_message, user_message, convert_system_to_user=convert_system_to_user
-    )
 
     if func_spec is not None:
         filtered_kwargs["tools"] = [func_spec.as_openai_tool_dict]
