@@ -36,6 +36,7 @@ def query(
 ) -> tuple[OutputType, float, int, int, dict]:
     if model_kwargs["model"] == "o1-preview":
         api_key = os.environ.get("O1_KEY")
+        print(api_key)
         _client = openai.OpenAI(
             base_url="https://api.openai-forward.com/v1", api_key=api_key, max_retries=0
         )
